@@ -605,7 +605,7 @@ CSS;
 
 		$config = array(
 			'slug'               => plugin_basename(__FILE__),
-			'proper_folder_name' => 'WP-Benchmark',
+			'proper_folder_name' => 'wp-benchmark',
 			'api_url'            => 'https://api.github.com/repos/topdown/WP-Benchmark',
 			'raw_url'            => 'https://raw.github.com/topdown/WP-Benchmark/master',
 			'github_url'         => 'https://github.com/topdown/WP-Benchmark',
