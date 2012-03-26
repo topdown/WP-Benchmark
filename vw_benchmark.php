@@ -1,4 +1,31 @@
 <?php
+
+/*
+Plugin Name: VW Benchmark
+Plugin URI: https://github.com/topdown/WP-Benchmark
+Description: <strong>(PHP 5+ is required)</strong> A quick benchmark utility for WordPress It will currently output Run Time, Query Count, Memory Usage, Included File count. It can also output all queries being run, query errors, constants, and included files. <strong>You shouldn't leave this active, there is no reason to, its purpose is for debugging.</strong> But if you do at least shut off all of the settings in the settings page for the plugin. <strong>Only admins can see the data from this plugin unless checked for everyone (Don't leave it checked).</strong>
+Version: 1.0.0
+Author: Jeff Behnke
+Author URI: http://validwebs.com
+License: GPL MIT
+*/
+
+/*  Copyright 2012  Jeff Behnke  (email : code@validwebs.com)
+
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License, version 2, as
+	published by the Free Software Foundation.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
 /**
  * Benchmark - Profile plugin for WordPress
  *
@@ -11,16 +38,6 @@
  * @author     Jeff Behnke <code@validwebs.com>
  * @copyright  2009-12 ValidWebs.com
  * @license    GPL MIT
- */
-
-/*
-Plugin Name: VW Benchmark
-Plugin URI: https://github.com/topdown/WP-Benchmark
-Description: <strong>(PHP 5+ is required)</strong> A quick benchmark utility for WordPress It will currently output Run Time, Query Count, Memory Usage, Included File count. It can also output all queries being run, query errors, constants, and included files. <strong>You shouldn't leave this active, there is no reason to, its purpose is for debugging.</strong> But if you do at least shut off all of the settings in the settings page for the plugin. <strong>Only admins can see the data from this plugin unless checked for everyone (Don't leave it checked).</strong>
-Version: 1.0.0
-Author: Jeff Behnke 
-Author URI: http://validwebs.com
-License: GPL MIT
  */
 class vw_benchmark
 {
@@ -543,6 +560,7 @@ CSS;
 	 * Lists the available wp hooks
 	 *
 	 * @param bool $tag
+	 *
 	 * @return mixed
 	 */
 	private function list_hooked_functions($tag = false)
@@ -585,24 +603,20 @@ CSS;
 
 		define('WP_GITHUB_FORCE_UPDATE', true);
 
-		if (is_admin())
-		{ // note the use of is_admin() to double check that this is happening in the admin
+		$config = array(
+			'slug'               => plugin_basename(__FILE__),
+			'proper_folder_name' => 'WP-Benchmark',
+			'api_url'            => 'https://api.github.com/repos/topdown/WP-Benchmark',
+			'raw_url'            => 'https://raw.github.com/topdown/WP-Benchmark/master',
+			'github_url'         => 'https://github.com/topdown/WP-Benchmark',
+			'zip_url'            => 'https://github.com/topdown/WP-Benchmark/zipball/master',
+			'sslverify'          => true,
+			'requires'           => '3.0',
+			'tested'             => '3.3',
+		);
 
-			$config = array(
-				'slug' => plugin_basename(__FILE__),
-				'proper_folder_name' => 'WP-Git-Status',
-				'api_url' => 'https://api.github.com/repos/topdown/WP-Git-Status/',
-				'raw_url' => 'https://raw.github.com/topdown/WP-Git-Status/master',
-				'github_url' => 'https://github.com/topdown/WP-Git-Status/',
-				'zip_url' => 'https://github.com/topdown/WP-Git-Status/zipball/master',
-				'sslverify' => true,
-				'requires' => '3.0',
-				'tested' => '3.3',
-			);
+		new WPGitHubUpdater($config);
 
-			new WPGitHubUpdater($config);
-
-		}
 	}
 }
 
