@@ -4,21 +4,20 @@
  *
  * PHP version 5 required
  *
- * Created 3/10/12, 11:06 PM
+ * Created 3/26/12, 2:14 AM
  *
  * @category   WordPress Plugin
  * @package    VW Benchmark - vw_benchmark.php
  * @author     Jeff Behnke <code@validwebs.com>
  * @copyright  2009-12 ValidWebs.com
  * @license    GPL MIT
- * @version    0.0.1
  */
 
 /**
 Plugin Name: VW Benchmark
 Plugin URI: http://valid-webs.com
 Description: <strong>(PHP 5+ is required)</strong> A quick benchmark utility for WordPress It will currently output Run Time, Query Count, Memory Usage, Included File count. It can also output all queries being run, query errors, constants, and included files. <strong>You shouldn't leave this active, there is no reason to, its purpose is for debugging.</strong> But if you do at least shut off all of the settings in the settings page for the plugin. <strong>Only admins can see the data from this plugin unless checked for everyone (Don't leave it checked).</strong>
-Version: 0.0.1
+Version: 1.0.0
 Author: Jeff Behnke <code@valid-webs.com>
 Author URI: http://valid-webs.com
 License: GPL MIT
@@ -39,7 +38,7 @@ class vw_benchmark
 	 *
 	 * @var string
 	 */
-	public $version = '0.0.1';
+	public $version = '1.0.0';
 
 	/**
 	 * Holds the options array
@@ -76,6 +75,11 @@ class vw_benchmark
 				$this,
 				$this->plugin_slug . '_plugin_action_links'
 			), 10, 2);
+
+			add_action('init', array(
+				$this,
+				'github_updater_init'
+			));
 		}
 		else
 		{
@@ -573,6 +577,32 @@ CSS;
 		echo '</pre>';
 		return;
 
+	}
+
+	public function github_updater_init()
+	{
+		include_once('updater.php');
+
+		define('WP_GITHUB_FORCE_UPDATE', true);
+
+		if (is_admin())
+		{ // note the use of is_admin() to double check that this is happening in the admin
+
+			$config = array(
+				'slug' => plugin_basename(__FILE__),
+				'proper_folder_name' => 'WP-Git-Status',
+				'api_url' => 'https://api.github.com/repos/topdown/WP-Git-Status/',
+				'raw_url' => 'https://raw.github.com/topdown/WP-Git-Status/master',
+				'github_url' => 'https://github.com/topdown/WP-Git-Status/',
+				'zip_url' => 'https://github.com/topdown/WP-Git-Status/zipball/master',
+				'sslverify' => true,
+				'requires' => '3.0',
+				'tested' => '3.3',
+			);
+
+			new WPGitHubUpdater($config);
+
+		}
 	}
 }
 

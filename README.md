@@ -3,6 +3,8 @@ VW BenchMark II - WordPress profiling/debugging tool
 #### Plugin install
 **** Requires PHP 5+ ****
 
+~Current Version:1.3~
+
 Simply upload like any other plugin to the plugin directory and activate.
 
 Visit the settings page to set options for debugging or profiling.
