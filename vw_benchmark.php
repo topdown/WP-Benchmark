@@ -129,7 +129,7 @@ class vw_benchmark
 	 */
 	public function vw_bench_plugin_action_links($links, $file)
 	{
-		if ($file == 'vw_benchmark/vw_benchmark.php')
+		if ($file == 'WP-Benchmark/vw_benchmark.php')
 		{
 			$settings_link = '<a href="options-general.php?page=' . $this->plugin_slug . '">' . __('Settings', $this->plugin_slug) . '</a>';
 			array_unshift($links, $settings_link);
