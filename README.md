@@ -3,8 +3,6 @@ VW BenchMark II - WordPress profiling/debugging tool
 #### Plugin install
 **** Requires PHP 5+ ****
 
-`~Current Version:1.3~`
-
 Useful for debugging and profiling your WordPress sites server side code (PHP, Queries, Includes, Hooks, Query Errors, Constants).
 
 Or even locating features such as listing available WP Hooks.
