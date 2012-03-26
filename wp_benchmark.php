@@ -1,7 +1,7 @@
 <?php
 
 /*
-Plugin Name: VW Benchmark
+Plugin Name: WP Benchmark
 Plugin URI: https://github.com/topdown/WP-Benchmark
 Description: <strong>(PHP 5+ is required)</strong> A quick benchmark utility for WordPress It will currently output Run Time, Query Count, Memory Usage, Included File count. It can also output all queries being run, query errors, constants, and included files. <strong>You shouldn't leave this active, there is no reason to, its purpose is for debugging.</strong> But if you do at least shut off all of the settings in the settings page for the plugin. <strong>Only admins can see the data from this plugin unless checked for everyone (Don't leave it checked).</strong>
 Version: 1.0.0
@@ -34,12 +34,12 @@ License: GPL MIT
  * Created 3/26/12, 2:14 AM
  *
  * @category   WordPress Plugin
- * @package    VW Benchmark - vw_benchmark.php
+ * @package    VW Benchmark - wp_benchmark.php
  * @author     Jeff Behnke <code@validwebs.com>
  * @copyright  2009-12 ValidWebs.com
  * @license    GPL MIT
  */
-class vw_benchmark
+class wp_benchmark
 {
 
 	/**
@@ -69,7 +69,7 @@ class vw_benchmark
 	 *
 	 * @var string
 	 */
-	public $plugin_slug = 'vw_bench';
+	public $plugin_slug = 'wp_bench';
 
 	/**
 	 * Initiate the plugin
@@ -93,10 +93,6 @@ class vw_benchmark
 				$this->plugin_slug . '_plugin_action_links'
 			), 10, 2);
 
-			add_action('init', array(
-				$this,
-				'github_updater_init'
-			));
 		}
 		else
 		{
@@ -127,9 +123,9 @@ class vw_benchmark
 	 *
 	 * @return array
 	 */
-	public function vw_bench_plugin_action_links($links, $file)
+	public function wp_bench_plugin_action_links($links, $file)
 	{
-		if ($file == 'WP-Benchmark/vw_benchmark.php')
+		if ($file == 'WP-Benchmark/wp_benchmark.php')
 		{
 			$settings_link = '<a href="options-general.php?page=' . $this->plugin_slug . '">' . __('Settings', $this->plugin_slug) . '</a>';
 			array_unshift($links, $settings_link);
@@ -138,7 +134,7 @@ class vw_benchmark
 	}
 
 	// Insert the menu link
-	public function vw_bench_menu()
+	public function wp_bench_menu()
 	{
 		//create new menu
 		//( $page_title, $menu_title, $capability, $menu_slug, $function = '', $icon_url = '', $position = NULL )
@@ -157,7 +153,7 @@ class vw_benchmark
 	/**
 	 * The code for the options page / settings
 	 */
-	public function vw_bench_settings()
+	public function wp_bench_settings()
 	{
 		global $current_user;
 
@@ -417,7 +413,7 @@ CSS;
 	 *
 	 * @return mixed
 	 */
-	public function vw_benchmark_init()
+	public function wp_benchmark_init()
 	{
 		global $current_user;
 
@@ -597,28 +593,7 @@ CSS;
 
 	}
 
-	public function github_updater_init()
-	{
-		include_once('updater.php');
-
-		define('WP_GITHUB_FORCE_UPDATE', true);
-
-		$config = array(
-			'slug'               => plugin_basename(__FILE__),
-			'proper_folder_name' => 'WP-Benchmark',
-			'api_url'            => 'https://api.github.com/repos/topdown/WP-Benchmark',
-			'raw_url'            => 'https://raw.github.com/topdown/WP-Benchmark/master',
-			'github_url'         => 'https://github.com/topdown/WP-Benchmark',
-			'zip_url'            => 'https://github.com/topdown/WP-Benchmark/zipball/master',
-			'sslverify'          => true,
-			'requires'           => '3.0',
-			'tested'             => '3.3',
-		);
-
-		new WPGitHubUpdater($config);
-
-	}
 }
 
-$vw_benchmark = new vw_benchmark();
-// End vw_benchmark.php
+$wp_benchmark = new wp_benchmark();
+// End wp_benchmark.php
