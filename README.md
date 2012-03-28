@@ -7,6 +7,8 @@ Useful for debugging and profiling your WordPress sites server side code (PHP, Q
 
 Or even locating features such as listing available WP Hooks.
 
+Most of this is code that I have always used in my WP development process and thought I would make it into a plugin and available to everyone.
+
 Simply upload like any other plugin to the plugin directory and activate.
 
 Visit the settings page to set options for debugging or profiling.
@@ -16,10 +18,10 @@ Example of the profile output
 ----------------------------------------------
 Note that TwentyTen is lighter in all areas.
 
-![TwentyTen](https://github.com/topdown/WordPress-Plugins/raw/master/vw_benchmark/screenshots/twentyten.png?raw=true "TwentyTen")
+![TwentyTen](https://github.com/topdown/WP-Benchmark/raw/master/vw_benchmark/screenshots/twentyten.png?raw=true "TwentyTen")
 
 TwentyEleven runs extra queries out of the box and has more includes as seen below.
-![TwentyEleven](https://github.com/topdown/WordPress-Plugins/raw/master/vw_benchmark/screenshots/twentyeleven.png?raw=true "TwentyEleven")
+![TwentyEleven](https://github.com/topdown/WP-Benchmark/raw/master/vw_benchmark/screenshots/twentyeleven.png?raw=true "TwentyEleven")
 
 ----------------------------------------------
 See the rest of the screenshots in the screenshots directory.
@@ -27,5 +29,5 @@ See the rest of the screenshots in the screenshots directory.
 
 VW Benchmark Admin options / Settings
 
-![Options](https://github.com/topdown/WordPress-Plugins/raw/master/vw_benchmark/screenshots/options.png "Options")
+![Options](https://github.com/topdown/WP-Benchmark/raw/master/vw_benchmark/screenshots/options.png "Options")
 
