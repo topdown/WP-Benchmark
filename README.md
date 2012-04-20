@@ -26,7 +26,7 @@ TwentyEleven runs extra queries out of the box and has more includes as seen bel
 ----------------------------------------------
 See the rest of the screenshots in the screenshots directory.
 
-Preview
+Preview (As of v1.0.1)
 ![TwentyEleven](https://github.com/topdown/WP-Benchmark/raw/master/screenshots/wp-bench.png?raw=true "TwentyEleven")
 
 VW Benchmark Admin options / Settings
