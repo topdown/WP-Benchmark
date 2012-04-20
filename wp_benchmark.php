@@ -80,6 +80,8 @@ class wp_benchmark
 		// Set Plugin Path
 		$this->plugin_path = dirname(__FILE__);
 
+		$this->options = (array) get_option($this->plugin_slug . '_settings');
+
 		if (is_admin())
 		{
 			// admin actions
@@ -93,6 +95,18 @@ class wp_benchmark
 				$this->plugin_slug . '_plugin_action_links'
 			), 10, 2);
 
+			if (in_array('admin', $this->options))
+			{
+				add_action('admin_head', array(
+					$this,
+					'bench_css'
+				));
+
+				add_action('shutdown', array(
+					$this,
+					$this->plugin_slug . 'mark_init'
+				), 100);
+			}
 		}
 		else
 		{
@@ -101,13 +115,11 @@ class wp_benchmark
 				'bench_css'
 			));
 
-			add_action('wp_footer', array(
+			add_action('shutdown', array(
 				$this,
 				$this->plugin_slug . 'mark_init'
 			), 100);
 		}
-
-		$this->options = (array) get_option($this->plugin_slug . '_settings');
 
 		if (in_array('queries', $this->options))
 		{
@@ -209,20 +221,19 @@ class wp_benchmark
 			<h3>Benchmark WP Debug Options</h3>
 
 			<p>
-				<label for="<?php echo $this->plugin_slug; ?>_settings">OutPut Text Color:</label>
-
-				&nbsp;&nbsp;&nbsp;#
-				<input type="text" id="<?php echo $this->plugin_slug; ?>_settings" name="<?php echo $this->plugin_slug; ?>_settings[color]" value="<?php echo $this->options['color']; ?>" />
+				<label for="<?php echo $this->plugin_slug; ?>_settings">Show in Admin Footer:</label>
+				<?php if (in_array('admin', $this->options))
+			{
+				?>
+				<input type="checkbox" id="<?php echo $this->plugin_slug; ?>_settings" name="<?php echo $this->plugin_slug; ?>_settings[admin]" value="admin" checked="checked" /><?php
+			}
+			else
+			{
+				?>
+				<input type="checkbox" id="<?php echo $this->plugin_slug; ?>_settings" name="<?php echo $this->plugin_slug; ?>_settings[admin]" value="admin" /><?php
+			}?>
 				<br />
-				<small>Just the HTML color code eg. ffffff for white.</small>
-			</p>
-
-			<p>
-				<label for="<?php echo $this->plugin_slug; ?>_settings">Pre Block Background Color:</label>
-				&nbsp;&nbsp;&nbsp;#
-				<input type="text" id="<?php echo $this->plugin_slug; ?>_settings" name="<?php echo $this->plugin_slug; ?>_settings[bgcolor]" value="<?php echo $this->options['bgcolor']; ?>" />
-				<br />
-				<small>Just the HTML color code eg. ffffff for white.</small>
+				<small>Shows WP Benchmark in the Admin panel also.</small>
 			</p>
 
 			<p>
@@ -380,28 +391,109 @@ class wp_benchmark
 	public function bench_css()
 	{
 
-		$color   = (isset($this->options['color'])) ? $this->options['color'] : 'ffffff';
-		$bgcolor = (isset($this->options['bgcolor'])) ? $this->options['bgcolor'] : '000000';
-
 		$css = <<<CSS
 		<style type="text/css">
-		#benchmark-pl {
+		#bench-wrap {
 			display: block;
-			width: 1000px;
-			margin: 10px auto;
-			padding:5px;
-			text-align: center;
-			color: #$color;
-			line-height: 24px;
+			position: relative;
+			width: 100%;
+			bottom: 0;
+			margin: 0;
+			padding: 0;
+			color: #fff;
+			background: #222;
+			font-size: 13px;
+			font-family: arial, sans-serif;
 		}
+
+		#benchmark-pl {
+			position:relative;
+			display: block;
+			margin: 0 auto;
+			padding: 8px 0;
+			line-height: 18px;
+		}
+
+		span.mark-bl {
+			display: inline-block;
+			padding: 0 10px;
+			margin: 0 0 0 10px;
+		}
+
 		.vw-bench-block-pl {
 			display: block;
-			width: 100%;
-			padding: 10px;
+			width: auto;
 			text-align: left;
-			background: #$bgcolor;
-			margin: 5px auto;
+			background: #333;
+			margin: 8px auto 0 auto;
+			padding: 0;
 			overflow: auto;
+		}
+
+		.vw-bench-block-pl pre, .wp-queries p, .wp-queries div {
+			display: block;
+			width: 90%;
+			margin: 5px auto;
+		}
+
+		.wp-queries span.bold {
+			font-weight: bold;
+			color: #fff;
+		}
+
+		.wp-queries .time {
+			color: #ff6666;
+		}
+
+		.wp-queries .count {
+			position:relative;
+			top: 24px;
+			display: inline-block;
+			width: 40px;
+			margin-left: 25px;
+			color: #ffff00;
+			font-weight: bold;
+		}
+
+		.wp-queries .functions {
+			color: #00ff00;
+		}
+
+		.wp-queries .query {
+			color: #00ffff;
+		}
+
+		.wp-queries .output {
+			display: block;
+			width: 100%;
+			margin: 0;
+			padding: 10px 0;
+			border-top: 1px solid #555;
+			border-bottom: 1px solid #000;
+		}
+
+		.wp-queries .output p, .wp-queries .output div {
+			line-height: 20px;
+		}
+
+		.wp-queries .fleft {
+			display: inline-block;
+			float: left;
+			width: 5%;
+		}
+
+		.vw-bench-block-pl code {
+			background: #222;
+			color: #ff6666;
+		}
+
+		.vw-bench-block-pl .wpdberror {
+			padding: 0;
+			margin: 0;
+		}
+
+		.clear {
+		clear: both;
 		}
 		</style>
 CSS;
@@ -426,9 +518,9 @@ CSS;
 		/** @var $wpdb wpdb */
 		global $wpdb, $timestart;
 
-		echo '<div id="benchmark-pl"><strong>VW BenchMarkII</strong> &bull; ';
+		echo '<div id="bench-wrap"><div id="benchmark-pl"><span class="mark-bl"><strong>WP BenchMarkII</strong> &raquo;</span>';
 
-		echo $wpdb->num_queries . ' Queries &bull; ';
+		echo '<span class="mark-bl">' . $wpdb->num_queries . ' Queries</span>';
 
 		$precision = 3;
 		$mtime     = microtime();
@@ -437,29 +529,39 @@ CSS;
 		$timetotal = $timeend - $timestart;
 		$r         = (function_exists('number_format_i18n')) ? number_format_i18n($timetotal, $precision) : number_format($timetotal, $precision);
 
-		echo "Load Time: " . $r . ' seconds.';
+		echo '<span class="mark-bl">Load Time: ' . $r . ' seconds.</span>';
 
 		if (function_exists('memory_get_usage'))
 		{
-			echo " &bull; Memory Usage: " . round(memory_get_usage() / 1048576, 2) . " MiB<br />";
+			echo '<span class="mark-bl">Memory Usage: ' . round(memory_get_usage() / 1048576, 2) . ' MiB</span>';
 		}
 		if (function_exists('memory_get_peak_usage'))
 		{
-			echo "Peak Memory Usage: " . round(memory_get_peak_usage() / 1048576, 6) . " MiB<br />";
+			echo '<span class="mark-bl">Peak Memory Usage: ' . round(memory_get_peak_usage() / 1048576, 6) . ' MiB</span>';
 		}
 
-		echo "Included Files: " . count(get_included_files());
+		echo '<span class="mark-bl">Included Files: ' . count(get_included_files()) . '</span>';
 		if (ini_get('apc.enabled') == true)
 		{
-			echo ' &bull; APC Cache Enabled';
+			echo '<span class="mark-bl">APC Cache Enabled</span>';
 		}
+
+		echo '<span class="mark-bl">Hooks: ' . $this->list_hooked_functions(false, true) . '</span>';
 
 		if (in_array('constants', $this->options) && current_user_can('manage_options'))
 		{
 			$constants = @get_defined_constants(1);
-			echo '<div class="vw-bench-block-pl"><pre>';
-			print_r($constants['user']);
-			echo '</pre></div>';
+
+			echo '<div class="vw-bench-block-pl wp-queries">';
+			foreach ($constants['user'] as $key => $val)
+			{
+				echo '<div class="output">';
+				echo '<p style="float: left; width: 25%; margin-left: 40px;">' . $key . '</p>';
+				echo '<p class="query">'  . $val . '</p>';
+				echo '<div class="clear"></div></div>';
+			} // end foreach
+			unset($inc);
+			echo '</div>';
 		}
 
 		if (in_array('errors', $this->options))
@@ -474,10 +576,26 @@ CSS;
 		{
 			define('SAVEQUERIES', true);
 
-			echo '<div class="vw-bench-block-pl">
-			<pre>';
-			print_r($wpdb->queries);
-			echo "</pre></div>";
+			echo '<div class="vw-bench-block-pl wp-queries">';
+
+			$q = 0;
+
+			if (sizeof($wpdb->queries))
+			{
+				//print_r($wpdb->queries);
+				foreach ($wpdb->queries as $queries)
+				{
+					echo '<div class="output">';
+					echo '<span class="count">' . ++$q . '</span>';
+					echo '<p class="query"><span class="bold">Query</span>: ' . $queries[0] . '</p>';
+					echo '<p class="time"><span class="bold">Time</span>: ' . $queries[1] . '</p>';
+					echo '<p class="functions"><span class="bold">Functions</span>: ' . $queries[2] . '</p>';
+					echo '</div>';
+				} // end foreach
+				unset($queries);
+			}
+
+			echo "</div>";
 		}
 
 		if (in_array('includes', $this->options))
@@ -514,21 +632,28 @@ CSS;
 				$includes = $wp_content;
 			}
 
-			echo '<div class="vw-bench-block-pl">
-			<pre>';
-			print_r($includes);
-			echo '</pre></div>';
+			$i = 0;
+			echo '<div class="vw-bench-block-pl wp-queries">';
+			foreach ($includes as $inc)
+			{
+				echo '<div class="output">';
+				echo '<span class="count">' . ++$i . '</span>';
+				echo '<p class="query"><span class="bold">Include Path</span>: ' . $inc . '</p>';
+				echo '</div>';
+			} // end foreach
+			unset($inc);
+			echo '</div>';
 
 		}
 
 		if (in_array('hooks', $this->options))
 		{
-			echo '<div class="vw-bench-block-pl hooks">';
+			echo '<div class="vw-bench-block-pl hooks wp-queries">';
 			$this->list_hooked_functions();
 			echo "</div>";
 		}
 
-		echo '</div>';
+		echo '</div></div>';
 	}
 
 	/**
@@ -557,9 +682,11 @@ CSS;
 	 *
 	 * @param bool $tag
 	 *
+	 * @param bool $count
+	 *
 	 * @return mixed
 	 */
-	private function list_hooked_functions($tag = false)
+	private function list_hooked_functions($tag = false, $count = false)
 	{
 		global $wp_filter;
 		if ($tag)
@@ -568,7 +695,7 @@ CSS;
 			if (!is_array($hook[$tag]))
 			{
 				trigger_error("Nothing found for '$tag' hook", E_USER_WARNING);
-				return;
+				return true;
 			}
 		}
 		else
@@ -576,21 +703,41 @@ CSS;
 			$hook = $wp_filter;
 			ksort($hook);
 		}
-		echo '<pre>';
-		$i = 1;
-		foreach ($hook as $tag => $priority)
-		{
-			echo "<br />=========================================================================================<br />" . $i++ . ". \t<strong style='color: red'>$tag</strong><br />=========================================================================================<br />";
-			ksort($priority);
-			foreach ($priority as $priority => $function)
-			{
-				echo "\t" . $priority;
-				foreach ($function as $name => $properties) echo "\t$name<br />";
-			}
-		}
-		echo '</pre>';
-		return;
 
+		$i = 0;
+
+		if ($count)
+		{
+			foreach ($hook as $tag => $priority)
+			{
+				$count = ++$i;
+			}
+
+			return $count;
+		}
+		else
+		{
+			foreach ($hook as $tag => $priority)
+			{
+				echo '<div class="output">';
+				echo '<span class="count">' . ++$i . '</span>';
+				echo "<p class=\"time\">$tag</p>";
+				ksort($priority);
+				foreach ($priority as $pr => $function)
+				{
+					echo '<div class="query"><span class="fleft bold">' . $pr . ' </span>';
+					foreach ($function as $name => $properties)
+					{
+						echo $name;
+					}
+					echo '</div><div class="clear"></div>';
+				}
+
+				echo '</div>';
+			}
+
+			return true;
+		}
 	}
 
 }
