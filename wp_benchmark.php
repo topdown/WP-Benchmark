@@ -4,7 +4,7 @@
 Plugin Name: WP Benchmark
 Plugin URI: https://github.com/topdown/WP-Benchmark
 Description: <strong>(PHP 5+ is required)</strong> A quick benchmark utility for WordPress It will currently output Run Time, Query Count, Memory Usage, Included File count. It can also output all queries being run, query errors, constants, and included files. <strong>You shouldn't leave this active, there is no reason to, its purpose is for debugging.</strong> But if you do at least shut off all of the settings in the settings page for the plugin. <strong>Only admins can see the data from this plugin unless checked for everyone (Don't leave it checked).</strong>
-Version: 1.0.0
+Version: 1.0.1
 Author: Jeff Behnke
 Author URI: http://validwebs.com
 License: GPL MIT
@@ -55,7 +55,7 @@ class wp_benchmark
 	 *
 	 * @var string
 	 */
-	public $version = '1.0.0';
+	public $version = '1.0.1';
 
 	/**
 	 * Holds the options array
