@@ -416,8 +416,8 @@ class wp_benchmark
 
 		span.mark-bl {
 			display: inline-block;
-			padding: 0 10px;
-			margin: 0 0 0 10px;
+			padding: 0 5px;
+			margin: 0 0 0 5px;
 		}
 
 		.vw-bench-block-pl {
@@ -749,7 +749,8 @@ CSS;
 	{
 		global $template;
 
-		$template = strstr($template, 'wp-content/');
+		$template = strstr($template, 'themes/');
+		$template = str_replace('themes/', '', $template);
 
 		return $template;
 	}
