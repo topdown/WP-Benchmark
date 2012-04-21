@@ -547,6 +547,7 @@ CSS;
 		}
 
 		echo '<span class="mark-bl">Hooks: ' . $this->list_hooked_functions(false, true) . '</span>';
+		echo '<span class="mark-bl">Template: ' . $this->show_template() . '</span>';
 
 		if (in_array('constants', $this->options) && current_user_can('manage_options'))
 		{
@@ -557,7 +558,7 @@ CSS;
 			{
 				echo '<div class="output">';
 				echo '<p style="float: left; width: 25%; margin-left: 40px;">' . $key . '</p>';
-				echo '<p class="query">'  . $val . '</p>';
+				echo '<p class="query">' . $val . '</p>';
 				echo '<div class="clear"></div></div>';
 			} // end foreach
 			unset($inc);
@@ -740,6 +741,18 @@ CSS;
 		}
 	}
 
+
+	/**
+	 * @return bool|mixed|string|void
+	 */
+	private function show_template()
+	{
+		global $template;
+
+		$template = strstr($template, 'wp-content/');
+
+		return $template;
+	}
 }
 
 $wp_benchmark = new wp_benchmark();
