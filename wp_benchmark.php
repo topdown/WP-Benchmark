@@ -334,7 +334,7 @@ class wp_benchmark
 				<input type="checkbox" id="<?php echo $this->plugin_slug; ?>_settings" name="<?php echo $this->plugin_slug; ?>_settings[filter2]" value="filter2" /><?php
 			}?>
 				<br />
-				<small>Filter out everything except wp-content directory.
+				<small>Filter out everything except wp-content directory, shows theme and plugin includes.
 					<br />
 					<strong>Show Includes must be checked.</strong></small>
 			</p>
@@ -518,9 +518,9 @@ CSS;
 		/** @var $wpdb wpdb */
 		global $wpdb, $timestart;
 
-		echo '<div id="bench-wrap"><div id="benchmark-pl"><span class="mark-bl"><strong>WP BenchMarkII</strong> &raquo;</span>';
+		$return = '<div id="bench-wrap"><div id="benchmark-pl"><span class="mark-bl"><strong>WP BenchMarkII</strong> &raquo;</span>';
 
-		echo '<span class="mark-bl">' . $wpdb->num_queries . ' Queries</span>';
+		$return .= '<span class="mark-bl">' . $wpdb->num_queries . ' Queries</span>';
 
 		$precision = 3;
 		$mtime     = microtime();
@@ -529,25 +529,28 @@ CSS;
 		$timetotal = $timeend - $timestart;
 		$r         = (function_exists('number_format_i18n')) ? number_format_i18n($timetotal, $precision) : number_format($timetotal, $precision);
 
-		echo '<span class="mark-bl">Load Time: ' . $r . ' seconds.</span>';
+		$return .= '<span class="mark-bl">Load Time: ' . $r . ' seconds.</span>';
 
 		if (function_exists('memory_get_usage'))
 		{
-			echo '<span class="mark-bl">Memory Usage: ' . round(memory_get_usage() / 1048576, 2) . ' MiB</span>';
+			$return .= '<span class="mark-bl">Memory Usage: ' . round(memory_get_usage() / 1048576, 2) . ' MiB</span>';
 		}
 		if (function_exists('memory_get_peak_usage'))
 		{
-			echo '<span class="mark-bl">Peak Memory Usage: ' . round(memory_get_peak_usage() / 1048576, 6) . ' MiB</span>';
+			$return .= '<span class="mark-bl">Peak Memory Usage: ' . round(memory_get_peak_usage() / 1048576, 6) . ' MiB</span>';
 		}
 
-		echo '<span class="mark-bl">Included Files: ' . count(get_included_files()) . '</span>';
+		$return .= '<span class="mark-bl">Included Files: ' . count(get_included_files()) . '</span>';
 		if (ini_get('apc.enabled') == true)
 		{
-			echo '<span class="mark-bl">APC Cache Enabled</span>';
+			$return .= '<span class="mark-bl">APC Cache Enabled</span>';
 		}
 
-		echo '<span class="mark-bl">Hooks: ' . $this->list_hooked_functions(false, true) . '</span>';
-		echo '<span class="mark-bl">Template: ' . $this->show_template() . '</span>';
+		$return .= '<span class="mark-bl">Hooks: ' . $this->list_hooked_functions(false, true) . '</span>';
+		$return .= '<span class="mark-bl">Template: ' . $this->show_template() . '</span>';
+
+		echo $return;
+		unset($return);
 
 		if (in_array('constants', $this->options) && current_user_can('manage_options'))
 		{
@@ -556,10 +559,11 @@ CSS;
 			echo '<div class="vw-bench-block-pl wp-queries">';
 			foreach ($constants['user'] as $key => $val)
 			{
-				echo '<div class="output">';
-				echo '<p style="float: left; width: 25%; margin-left: 40px;">' . $key . '</p>';
-				echo '<p class="query">' . $val . '</p>';
-				echo '<div class="clear"></div></div>';
+				$return = '<div class="output">';
+				$return .= '<p style="float: left; width: 25%; margin-left: 40px;">' . $key . '</p>';
+				$return .= '<p class="query">' . $val . '</p>';
+				$return .= '<div class="clear"></div></div>';
+				echo $return;
 			} // end foreach
 			unset($inc);
 			echo '</div>';
@@ -586,12 +590,14 @@ CSS;
 				//print_r($wpdb->queries);
 				foreach ($wpdb->queries as $queries)
 				{
-					echo '<div class="output">';
-					echo '<span class="count">' . ++$q . '</span>';
-					echo '<p class="query"><span class="bold">Query</span>: ' . $queries[0] . '</p>';
-					echo '<p class="time"><span class="bold">Time</span>: ' . $queries[1] . '</p>';
-					echo '<p class="functions"><span class="bold">Functions</span>: ' . $queries[2] . '</p>';
-					echo '</div>';
+					$return = '<div class="output">';
+					$return .= '<span class="count">' . ++$q . '</span>';
+					$return .= '<p class="query"><span class="bold">Query</span>: ' . $queries[0] . '</p>';
+					$return .= '<p class="time"><span class="bold">Time</span>: ' . $queries[1] . '</p>';
+					$return .= '<p class="functions"><span class="bold">Functions</span>: ' . $queries[2] . '</p>';
+					$return .= '</div>';
+
+					echo $return;
 				} // end foreach
 				unset($queries);
 			}
@@ -637,10 +643,11 @@ CSS;
 			echo '<div class="vw-bench-block-pl wp-queries">';
 			foreach ($includes as $inc)
 			{
-				echo '<div class="output">';
-				echo '<span class="count">' . ++$i . '</span>';
-				echo '<p class="query"><span class="bold">Include Path</span>: ' . $inc . '</p>';
-				echo '</div>';
+				$return = '<div class="output">';
+				$return .= '<span class="count">' . ++$i . '</span>';
+				$return .= '<p class="query"><span class="bold">Include Path</span>: ' . $inc . '</p>';
+				$return .= '</div>';
+				echo $return;
 			} // end foreach
 			unset($inc);
 			echo '</div>';
@@ -720,9 +727,10 @@ CSS;
 		{
 			foreach ($hook as $tag => $priority)
 			{
-				echo '<div class="output">';
-				echo '<span class="count">' . ++$i . '</span>';
-				echo "<p class=\"time\">$tag</p>";
+				$return = '<div class="output">';
+				$return .= '<span class="count">' . ++$i . '</span>';
+				$return .= "<p class=\"time\">$tag</p>";
+				echo $return;
 				ksort($priority);
 				foreach ($priority as $pr => $function)
 				{
@@ -733,7 +741,6 @@ CSS;
 					}
 					echo '</div><div class="clear"></div>';
 				}
-
 				echo '</div>';
 			}
 
