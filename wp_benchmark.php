@@ -115,10 +115,11 @@ class wp_benchmark
 				'bench_css'
 			));
 
-			add_action('shutdown', array(
+			add_action('wp_footer', array(
 				$this,
 				$this->plugin_slug . 'mark_init'
 			), 100);
+
 		}
 
 		if (in_array('queries', $this->options))
@@ -137,17 +138,20 @@ class wp_benchmark
 	 */
 	public function wp_bench_plugin_action_links($links, $file)
 	{
+
 		if ($file == 'WP-Benchmark/wp_benchmark.php')
 		{
 			$settings_link = '<a href="options-general.php?page=' . $this->plugin_slug . '">' . __('Settings', $this->plugin_slug) . '</a>';
 			array_unshift($links, $settings_link);
 		}
+
 		return $links;
 	}
 
 	// Insert the menu link
 	public function wp_bench_menu()
 	{
+
 		//create new menu
 		//( $page_title, $menu_title, $capability, $menu_slug, $function = '', $icon_url = '', $position = NULL )
 		add_options_page(
@@ -167,6 +171,7 @@ class wp_benchmark
 	 */
 	public function wp_bench_settings()
 	{
+
 		global $current_user;
 
 		get_currentuserinfo();
@@ -191,7 +196,7 @@ class wp_benchmark
 			They are for debugging only.</strong></p>
 
 		<p>Generally when debugging you will only have one type selected at a time.</p>
-		<style type="text/css" scoped="">
+		<style type="text/css">
 			#message {
 				padding: 10px;
 			}
@@ -392,7 +397,7 @@ class wp_benchmark
 	{
 
 		$css = <<<CSS
-		<style type="text/css">
+<style>
 		#bench-wrap {
 			display: block;
 			position: relative;
@@ -404,6 +409,7 @@ class wp_benchmark
 			background: #222;
 			font-size: 13px;
 			font-family: arial, sans-serif;
+			text-align: left;
 		}
 
 		#benchmark-pl {
@@ -495,7 +501,7 @@ class wp_benchmark
 		.clear {
 		clear: both;
 		}
-		</style>
+</style>
 CSS;
 		echo $css;
 	}
@@ -507,6 +513,7 @@ CSS;
 	 */
 	public function wp_benchmark_init()
 	{
+
 		global $current_user;
 
 		get_currentuserinfo();
@@ -579,7 +586,10 @@ CSS;
 
 		if (in_array('queries', $this->options))
 		{
-			define('SAVEQUERIES', true);
+			if (!defined('SAVEQUERIES'))
+			{
+				define('SAVEQUERIES', true);
+			}
 
 			echo '<div class="vw-bench-block-pl wp-queries">';
 
@@ -669,14 +679,22 @@ CSS;
 	 */
 	private function handle_post()
 	{
+
 		if (isset($_POST['save']) && $_POST['action'] == 'save')
 		{
 			if (!wp_verify_nonce($_REQUEST['_wpnonce'], "update-options"))
 			{
 				die("Security Check");
 			}
-
-			update_option($this->plugin_slug . '_settings', $_POST[$this->plugin_slug . '_settings']);
+			$post = (isset($_POST[$this->plugin_slug . '_settings'])) ? $_POST[$this->plugin_slug . '_settings'] : '';
+			if(empty($post))
+			{
+				delete_option($this->plugin_slug . '_settings', $post);
+			}
+			else
+			{
+				update_option($this->plugin_slug . '_settings', $post);
+			}
 
 			echo '<div id="message" class="updated fade"><strong>VW Benchmark settings updated.</strong></div>';
 
@@ -696,6 +714,7 @@ CSS;
 	 */
 	private function list_hooked_functions($tag = false, $count = false)
 	{
+
 		global $wp_filter;
 		if ($tag)
 		{
@@ -703,6 +722,7 @@ CSS;
 			if (!is_array($hook[$tag]))
 			{
 				trigger_error("Nothing found for '$tag' hook", E_USER_WARNING);
+
 				return true;
 			}
 		}
@@ -754,6 +774,7 @@ CSS;
 	 */
 	private function show_template()
 	{
+
 		global $template;
 
 		$template = strstr($template, 'themes/');
