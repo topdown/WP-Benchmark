@@ -39,8 +39,7 @@ License: GPL MIT
  * @copyright  2009-12 ValidWebs.com
  * @license    GPL MIT
  */
-class wp_benchmark
-{
+class wp_benchmark {
 
 	/**
 	 * Our plugin path
@@ -74,57 +73,52 @@ class wp_benchmark
 	/**
 	 * Initiate the plugin
 	 */
-	public function __construct()
-	{
+	public function __construct() {
 
 		// Set Plugin Path
-		$this->plugin_path = dirname(__FILE__);
+		$this->plugin_path = dirname( __FILE__ );
 
-		$this->options = (array) get_option($this->plugin_slug . '_settings');
+		$this->options = (array) get_option( $this->plugin_slug . '_settings' );
 
-		if (is_admin())
-		{
+		if ( is_admin() ) {
 			// admin actions
-			add_action('admin_menu', array(
+			add_action( 'admin_menu', array(
 				$this,
 				$this->plugin_slug . '_menu'
-			));
+			) );
 
-			add_filter('plugin_action_links', array(
+			add_filter( 'plugin_action_links', array(
 				$this,
 				$this->plugin_slug . '_plugin_action_links'
-			), 10, 2);
+			), 10, 2 );
 
-			if (in_array('admin', $this->options))
-			{
-				add_action('admin_head', array(
+			if ( in_array( 'admin', $this->options ) ) {
+				add_action( 'admin_head', array(
 					$this,
 					'bench_css'
-				));
+				) );
 
-				add_action('shutdown', array(
+				add_action( 'shutdown', array(
 					$this,
 					$this->plugin_slug . 'mark_init'
-				), 100);
+				), 100 );
 			}
 		}
-		else
-		{
-			add_action('wp_head', array(
+		else {
+			add_action( 'wp_head', array(
 				$this,
 				'bench_css'
-			));
+			) );
 
-			add_action('wp_footer', array(
+			add_action( 'wp_footer', array(
 				$this,
 				$this->plugin_slug . 'mark_init'
-			), 100);
+			), 100 );
 
 		}
 
-		if (in_array('queries', $this->options))
-		{
-			define('SAVEQUERIES', true);
+		if ( in_array( 'queries', $this->options ) ) {
+			define( 'SAVEQUERIES', true );
 		}
 	}
 
@@ -136,24 +130,20 @@ class wp_benchmark
 	 *
 	 * @return array
 	 */
-	public function wp_bench_plugin_action_links($links, $file)
-	{
+	public function wp_bench_plugin_action_links( $links, $file ) {
 
-		if ($file == 'WP-Benchmark/wp_benchmark.php')
-		{
-			$settings_link = '<a href="options-general.php?page=' . $this->plugin_slug . '">' . __('Settings', $this->plugin_slug) . '</a>';
-			array_unshift($links, $settings_link);
+		if ( $file == 'WP-Benchmark/wp_benchmark.php' ) {
+			$settings_link = '<a href="options-general.php?page=' . $this->plugin_slug . '">' . __( 'Settings', $this->plugin_slug ) . '</a>';
+			array_unshift( $links, $settings_link );
 		}
 
 		return $links;
 	}
 
 	// Insert the menu link
-	public function wp_bench_menu()
-	{
+	public function wp_bench_menu() {
 
 		//create new menu
-		//( $page_title, $menu_title, $capability, $menu_slug, $function = '', $icon_url = '', $position = NULL )
 		add_options_page(
 			'VW Bench Settings',
 			'VW Benchmark',
@@ -169,14 +159,12 @@ class wp_benchmark
 	/**
 	 * The code for the options page / settings
 	 */
-	public function wp_bench_settings()
-	{
+	public function wp_bench_settings() {
 
 		global $current_user;
 
 		get_currentuserinfo();
-		if (!current_user_can('manage_options'))
-		{
+		if ( ! current_user_can( 'manage_options' ) ) {
 			die();
 		}
 
@@ -222,18 +210,15 @@ class wp_benchmark
 		</style>
 		<form action="<?php print $_SERVER['PHP_SELF'];?>?page=<?php echo $this->plugin_slug; ?>" method="post">
 
-			<?php wp_nonce_field('update-options');?>
+			<?php wp_nonce_field( 'update-options' );?>
 			<h3>Benchmark WP Debug Options</h3>
 
 			<p>
 				<label for="<?php echo $this->plugin_slug; ?>_settings">Show in Admin Footer:</label>
-				<?php if (in_array('admin', $this->options))
-			{
-				?>
-				<input type="checkbox" id="<?php echo $this->plugin_slug; ?>_settings" name="<?php echo $this->plugin_slug; ?>_settings[admin]" value="admin" checked="checked" /><?php
+				<?php if ( in_array( 'admin', $this->options ) ) { ?>
+					<input type="checkbox" id="<?php echo $this->plugin_slug; ?>_settings" name="<?php echo $this->plugin_slug; ?>_settings[admin]" value="admin" checked="checked" /><?php
 			}
-			else
-			{
+			else {
 				?>
 				<input type="checkbox" id="<?php echo $this->plugin_slug; ?>_settings" name="<?php echo $this->plugin_slug; ?>_settings[admin]" value="admin" /><?php
 			}?>
@@ -243,13 +228,9 @@ class wp_benchmark
 
 			<p>
 				<label for="<?php echo $this->plugin_slug; ?>_settings">Show WP Queries:</label>
-				<?php if (in_array('queries', $this->options))
-			{
-				?>
-				<input type="checkbox" id="<?php echo $this->plugin_slug; ?>_settings" name="<?php echo $this->plugin_slug; ?>_settings[queries]" value="queries" checked="checked" /><?php
-			}
-			else
-			{
+				<?php if (in_array('queries', $this->options)) { ?>
+					<input type="checkbox" id="<?php echo $this->plugin_slug; ?>_settings" name="<?php echo $this->plugin_slug; ?>_settings[queries]" value="queries" checked="checked" /><?php
+			} else {
 				?>
 				<input type="checkbox" id="<?php echo $this->plugin_slug; ?>_settings" name="<?php echo $this->plugin_slug; ?>_settings[queries]" value="queries" /><?php
 			}?>
@@ -262,13 +243,9 @@ class wp_benchmark
 
 			<p>
 				<label for="<?php echo $this->plugin_slug; ?>_settings">Show WP Database Query Errors:</label>
-				<?php if (in_array('errors', $this->options))
-			{
-				?>
-				<input type="checkbox" id="<?php echo $this->plugin_slug; ?>_settings" name="<?php echo $this->plugin_slug; ?>_settings[errors]" value="errors" checked="checked" /><?php
-			}
-			else
-			{
+				<?php if ( in_array( 'errors', $this->options ) ) { ?>
+					<input type="checkbox" id="<?php echo $this->plugin_slug; ?>_settings" name="<?php echo $this->plugin_slug; ?>_settings[errors]" value="errors" checked="checked" /><?php
+			} else {
 				?>
 				<input type="checkbox" id="<?php echo $this->plugin_slug; ?>_settings" name="<?php echo $this->plugin_slug; ?>_settings[errors]" value="errors" /><?php
 			}?>
@@ -278,13 +255,9 @@ class wp_benchmark
 
 			<p>
 				<label for="<?php echo $this->plugin_slug; ?>_settings">Show Constants:</label>
-				<?php if (in_array('constants', $this->options))
-			{
-				?>
-				<input type="checkbox" id="<?php echo $this->plugin_slug; ?>_settings" name="<?php echo $this->plugin_slug; ?>_settings[constants]" value="constants" checked="checked" /><?php
-			}
-			else
-			{
+				<?php if ( in_array( 'constants', $this->options ) ) { ?>
+					<input type="checkbox" id="<?php echo $this->plugin_slug; ?>_settings" name="<?php echo $this->plugin_slug; ?>_settings[constants]" value="constants" checked="checked" /><?php
+			} else {
 				?>
 				<input type="checkbox" id="<?php echo $this->plugin_slug; ?>_settings" name="<?php echo $this->plugin_slug; ?>_settings[constants]" value="constants" /><?php
 			}?>
@@ -294,13 +267,9 @@ class wp_benchmark
 
 			<p>
 				<label for="<?php echo $this->plugin_slug; ?>_settings">Show Includes:</label>
-				<?php if (in_array('includes', $this->options))
-			{
-				?>
-				<input type="checkbox" id="<?php echo $this->plugin_slug; ?>_settings" name="<?php echo $this->plugin_slug; ?>_settings[includes]" value="includes" checked="checked" /><?php
-			}
-			else
-			{
+				<?php if ( in_array( 'includes', $this->options ) ) { ?>
+					<input type="checkbox" id="<?php echo $this->plugin_slug; ?>_settings" name="<?php echo $this->plugin_slug; ?>_settings[includes]" value="includes" checked="checked" /><?php
+			} else {
 				?>
 				<input type="checkbox" id="<?php echo $this->plugin_slug; ?>_settings" name="<?php echo $this->plugin_slug; ?>_settings[includes]" value="includes" /><?php
 			}?>
@@ -310,13 +279,9 @@ class wp_benchmark
 
 			<p>
 				<label for="<?php echo $this->plugin_slug; ?>_settings">Includes Filter 1:</label>
-				<?php if (in_array('filter1', $this->options))
-			{
-				?>
-				<input type="checkbox" id="<?php echo $this->plugin_slug; ?>_settings" name="<?php echo $this->plugin_slug; ?>_settings[filter1]" value="filter1" checked="checked" /><?php
-			}
-			else
-			{
+				<?php if ( in_array( 'filter1', $this->options ) ) { ?>
+					<input type="checkbox" id="<?php echo $this->plugin_slug; ?>_settings" name="<?php echo $this->plugin_slug; ?>_settings[filter1]" value="filter1" checked="checked" /><?php
+			} else {
 				?>
 				<input type="checkbox" id="<?php echo $this->plugin_slug; ?>_settings" name="<?php echo $this->plugin_slug; ?>_settings[filter1]" value="filter1" /><?php
 			}?>
@@ -328,13 +293,9 @@ class wp_benchmark
 
 			<p>
 				<label for="<?php echo $this->plugin_slug; ?>_settings">Includes Filter 2:</label>
-				<?php if (in_array('filter2', $this->options))
-			{
-				?>
-				<input type="checkbox" id="<?php echo $this->plugin_slug; ?>_settings" name="<?php echo $this->plugin_slug; ?>_settings[filter2]" value="filter2" checked="checked" /><?php
-			}
-			else
-			{
+				<?php if ( in_array( 'filter2', $this->options ) ) { ?>
+					<input type="checkbox" id="<?php echo $this->plugin_slug; ?>_settings" name="<?php echo $this->plugin_slug; ?>_settings[filter2]" value="filter2" checked="checked" /><?php
+			} else {
 				?>
 				<input type="checkbox" id="<?php echo $this->plugin_slug; ?>_settings" name="<?php echo $this->plugin_slug; ?>_settings[filter2]" value="filter2" /><?php
 			}?>
@@ -346,13 +307,9 @@ class wp_benchmark
 
 			<p>
 				<label for="<?php echo $this->plugin_slug; ?>_settings">Show Hooks:</label>
-				<?php if (in_array('hooks', $this->options))
-			{
-				?>
-				<input type="checkbox" id="<?php echo $this->plugin_slug; ?>_settings" name="<?php echo $this->plugin_slug; ?>_settings[hooks]" value="hooks" checked="checked" /><?php
-			}
-			else
-			{
+				<?php if ( in_array( 'hooks', $this->options ) ) { ?>
+					<input type="checkbox" id="<?php echo $this->plugin_slug; ?>_settings" name="<?php echo $this->plugin_slug; ?>_settings[hooks]" value="hooks" checked="checked" /><?php
+			} else {
 				?>
 				<input type="checkbox" id="<?php echo $this->plugin_slug; ?>_settings" name="<?php echo $this->plugin_slug; ?>_settings[hooks]" value="hooks" /><?php
 			}?>
@@ -363,13 +320,9 @@ class wp_benchmark
 			<p>
 				<label for="<?php echo $this->plugin_slug; ?>_settings">View Logged Out:
 				</label>
-				<?php if (in_array('logged_out', $this->options))
-			{
-				?>
-				<input type="checkbox" id="<?php echo $this->plugin_slug; ?>_settings" name="<?php echo $this->plugin_slug; ?>_settings[logged_out]" value="logged_out" checked="checked" /><?php
-			}
-			else
-			{
+				<?php if ( in_array( 'logged_out', $this->options ) ) { ?>
+					<input type="checkbox" id="<?php echo $this->plugin_slug; ?>_settings" name="<?php echo $this->plugin_slug; ?>_settings[logged_out]" value="logged_out" checked="checked" /><?php
+			} else {
 				?>
 				<input type="checkbox" id="<?php echo $this->plugin_slug; ?>_settings" name="<?php echo $this->plugin_slug; ?>_settings[logged_out]" value="logged_out" /><?php
 			}?>
@@ -386,15 +339,13 @@ class wp_benchmark
 		</form>
 	</div>
 	<?php
-
 	}
 
 
 	/**
 	 * Our CSS for the profiling blocks
 	 */
-	public function bench_css()
-	{
+	public function bench_css() {
 
 		$css = <<<CSS
 <style>
@@ -511,14 +462,12 @@ CSS;
 	 *
 	 * @return mixed
 	 */
-	public function wp_benchmark_init()
-	{
+	public function wp_benchmark_init() {
 
 		global $current_user;
 
 		get_currentuserinfo();
-		if (!current_user_can('manage_options') && !in_array('logged_out', $this->options))
-		{
+		if ( ! current_user_can( 'manage_options' ) && ! in_array( 'logged_out', $this->options ) ) {
 			return;
 		}
 
@@ -534,72 +483,61 @@ CSS;
 		$mtime     = explode(' ', $mtime);
 		$timeend   = $mtime[1] + $mtime[0];
 		$timetotal = $timeend - $timestart;
-		$r         = (function_exists('number_format_i18n')) ? number_format_i18n($timetotal, $precision) : number_format($timetotal, $precision);
+		$r         = ( function_exists( 'number_format_i18n' ) ) ? number_format_i18n( $timetotal, $precision ) : number_format( $timetotal, $precision );
 
 		$return .= '<span class="mark-bl">Load Time: ' . $r . ' seconds.</span>';
 
-		if (function_exists('memory_get_usage'))
-		{
-			$return .= '<span class="mark-bl">Memory Usage: ' . round(memory_get_usage() / 1048576, 2) . ' MiB</span>';
+		if ( function_exists( 'memory_get_usage' ) ) {
+			$return .= '<span class="mark-bl">Memory Usage: ' . round( memory_get_usage() / 1048576, 2 ) . ' MiB</span>';
 		}
-		if (function_exists('memory_get_peak_usage'))
-		{
-			$return .= '<span class="mark-bl">Peak Memory Usage: ' . round(memory_get_peak_usage() / 1048576, 6) . ' MiB</span>';
+		if ( function_exists( 'memory_get_peak_usage' ) ) {
+			$return .= '<span class="mark-bl">Peak Memory Usage: ' . round( memory_get_peak_usage() / 1048576, 6 ) . ' MiB</span>';
 		}
 
-		$return .= '<span class="mark-bl">Included Files: ' . count(get_included_files()) . '</span>';
-		if (ini_get('apc.enabled') == true)
-		{
+		$return .= '<span class="mark-bl">Included Files: ' . count( get_included_files() ) . '</span>';
+		if ( ini_get('apc.enabled') == true ) {
 			$return .= '<span class="mark-bl">APC Cache Enabled</span>';
 		}
 
-		$return .= '<span class="mark-bl">Hooks: ' . $this->list_hooked_functions(false, true) . '</span>';
+		$return .= '<span class="mark-bl">Hooks: ' . $this->list_hooked_functions( false, true ) . '</span>';
 		$return .= '<span class="mark-bl">Template: ' . $this->show_template() . '</span>';
 
 		echo $return;
-		unset($return);
+		unset( $return );
 
-		if (in_array('constants', $this->options) && current_user_can('manage_options'))
-		{
+		if ( in_array( 'constants', $this->options ) && current_user_can( 'manage_options' ) ) {
 			$constants = @get_defined_constants(1);
 
 			echo '<div class="vw-bench-block-pl wp-queries">';
-			foreach ($constants['user'] as $key => $val)
-			{
+			foreach ( $constants['user'] as $key => $val ) {
 				$return = '<div class="output">';
 				$return .= '<p style="float: left; width: 25%; margin-left: 40px;">' . $key . '</p>';
 				$return .= '<p class="query">' . $val . '</p>';
 				$return .= '<div class="clear"></div></div>';
 				echo $return;
 			} // end foreach
-			unset($inc);
+			unset( $inc );
 			echo '</div>';
 		}
 
-		if (in_array('errors', $this->options))
-		{
+		if ( in_array( 'errors', $this->options ) ) {
 			$wpdb->show_errors();
 			echo '<div class="vw-bench-block-pl"><pre>';
-			print_r($wpdb->print_error());
+			print_r( $wpdb->print_error() );
 			echo "</pre></div>";
 		}
 
-		if (in_array('queries', $this->options))
-		{
-			if (!defined('SAVEQUERIES'))
-			{
-				define('SAVEQUERIES', true);
+		if ( in_array( 'queries', $this->options ) ) {
+			if ( ! defined( 'SAVEQUERIES' ) ) {
+				define( 'SAVEQUERIES', true );
 			}
 
 			echo '<div class="vw-bench-block-pl wp-queries">';
 
 			$q = 0;
 
-			if (sizeof($wpdb->queries))
-			{
-				//print_r($wpdb->queries);
-				foreach ($wpdb->queries as $queries)
-				{
+			if ( sizeof( $wpdb->queries ) ) {
+				foreach ( $wpdb->queries as $queries ) {
 					$return = '<div class="output">';
 					$return .= '<span class="count">' . ++$q . '</span>';
 					$return .= '<p class="query"><span class="bold">Query</span>: ' . $queries[0] . '</p>';
@@ -609,63 +547,54 @@ CSS;
 
 					echo $return;
 				} // end foreach
-				unset($queries);
+				unset( $queries );
 			}
 
 			echo "</div>";
 		}
 
-		if (in_array('includes', $this->options))
-		{
+		if ( in_array( 'includes', $this->options ) ) {
 			$includes   = get_included_files();
 			$extras     = array();
 			$wp_content = array();
 
-			if (in_array('filter1', $this->options))
-			{
-				foreach ($includes as $inc)
-				{
-					if (!strpos($inc, 'wp-includes'))
-					{
+			if ( in_array( 'filter1', $this->options ) ) {
+				foreach ( $includes as $inc ) {
+					if ( ! strpos( $inc, 'wp-includes' ) ) {
 						$extras[] = $inc;
 					}
 
 				} // end foreach
-				unset($inc);
+				unset( $inc );
 				$includes = $extras;
 			}
 
-			if (in_array('filter2', $this->options))
-			{
-				foreach ($includes as $inc)
-				{
-					if (strpos($inc, 'wp-content'))
-					{
+			if ( in_array( 'filter2', $this->options ) ) {
+				foreach ( $includes as $inc ) {
+					if ( strpos( $inc, 'wp-content' ) ) {
 						$wp_content[] = $inc;
 					}
 
 				} // end foreach
-				unset($inc);
+				unset( $inc );
 				$includes = $wp_content;
 			}
 
 			$i = 0;
 			echo '<div class="vw-bench-block-pl wp-queries">';
-			foreach ($includes as $inc)
-			{
+			foreach ( $includes as $inc ) {
 				$return = '<div class="output">';
 				$return .= '<span class="count">' . ++$i . '</span>';
 				$return .= '<p class="query"><span class="bold">Include Path</span>: ' . $inc . '</p>';
 				$return .= '</div>';
 				echo $return;
 			} // end foreach
-			unset($inc);
+			unset( $inc );
 			echo '</div>';
 
 		}
 
-		if (in_array('hooks', $this->options))
-		{
+		if ( in_array( 'hooks', $this->options ) ) {
 			echo '<div class="vw-bench-block-pl hooks wp-queries">';
 			$this->list_hooked_functions();
 			echo "</div>";
@@ -677,29 +606,23 @@ CSS;
 	/**
 	 * Deal with the post and handle it accordingly
 	 */
-	private function handle_post()
-	{
+	private function handle_post() {
 
-		if (isset($_POST['save']) && $_POST['action'] == 'save')
-		{
-			if (!wp_verify_nonce($_REQUEST['_wpnonce'], "update-options"))
-			{
+		if ( isset( $_POST['save'] ) && $_POST['action'] == 'save' ) {
+			if ( ! wp_verify_nonce( $_REQUEST['_wpnonce'], "update-options" ) ) {
 				die("Security Check");
 			}
-			$post = (isset($_POST[$this->plugin_slug . '_settings'])) ? $_POST[$this->plugin_slug . '_settings'] : '';
-			if(empty($post))
-			{
-				delete_option($this->plugin_slug . '_settings', $post);
-			}
-			else
-			{
-				update_option($this->plugin_slug . '_settings', $post);
+			$post = ( isset( $_POST[$this->plugin_slug . '_settings'] ) ) ? $_POST[$this->plugin_slug . '_settings'] : '';
+			if( empty( $post ) ) {
+				delete_option( $this->plugin_slug . '_settings', $post );
+			} else {
+				update_option( $this->plugin_slug . '_settings', $post );
 			}
 
 			echo '<div id="message" class="updated fade"><strong>VW Benchmark settings updated.</strong></div>';
 
 			//We need to get the new settings so the form is updated properly
-			$this->options = (array) get_option($this->plugin_slug . '_settings');
+			$this->options = (array) get_option( $this->plugin_slug . '_settings' );
 		}
 	}
 
@@ -712,51 +635,40 @@ CSS;
 	 *
 	 * @return mixed
 	 */
-	private function list_hooked_functions($tag = false, $count = false)
-	{
+	private function list_hooked_functions( $tag = false, $count = false ) {
 
 		global $wp_filter;
-		if ($tag)
-		{
+		if ( $tag ) {
 			$hook[$tag] = $wp_filter[$tag];
-			if (!is_array($hook[$tag]))
-			{
-				trigger_error("Nothing found for '$tag' hook", E_USER_WARNING);
+			if ( ! is_array( $hook[$tag] ) ) {
+				trigger_error( "Nothing found for '$tag' hook", E_USER_WARNING );
 
 				return true;
 			}
-		}
-		else
-		{
+		} else {
 			$hook = $wp_filter;
-			ksort($hook);
+			ksort( $hook );
 		}
 
 		$i = 0;
 
-		if ($count)
-		{
-			foreach ($hook as $tag => $priority)
-			{
+		if ( $count ) {
+			foreach ( $hook as $tag => $priority ) {
 				$count = ++$i;
 			}
 
 			return $count;
-		}
-		else
-		{
-			foreach ($hook as $tag => $priority)
-			{
+		} else {
+			foreach ( $hook as $tag => $priority ) {
 				$return = '<div class="output">';
 				$return .= '<span class="count">' . ++$i . '</span>';
 				$return .= "<p class=\"time\">$tag</p>";
 				echo $return;
-				ksort($priority);
-				foreach ($priority as $pr => $function)
-				{
+				ksort( $priority );
+				
+				foreach ( $priority as $pr => $function ) {
 					echo '<div class="query"><span class="fleft bold">' . $pr . ' </span>';
-					foreach ($function as $name => $properties)
-					{
+					foreach ( $function as $name => $properties ) {
 						echo $name;
 					}
 					echo '</div><div class="clear"></div>';
@@ -772,13 +684,12 @@ CSS;
 	/**
 	 * @return bool|mixed|string|void
 	 */
-	private function show_template()
-	{
+	private function show_template() {
 
 		global $template;
 
-		$template = strstr($template, 'themes/');
-		$template = str_replace('themes/', '', $template);
+		$template = strstr( $template, 'themes/' );
+		$template = str_replace( 'themes/', '', $template );
 
 		return $template;
 	}
