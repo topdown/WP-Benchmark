@@ -124,7 +124,9 @@ class wp_benchmark
 
 		if (in_array('queries', $this->options))
 		{
-			define('SAVEQUERIES', true);
+			if( ! defined( 'SAVEQUERIES' ) ) {
+				define('SAVEQUERIES', true);
+			}
 		}
 	}
 
