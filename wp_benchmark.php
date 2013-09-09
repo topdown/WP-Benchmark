@@ -582,7 +582,7 @@ CSS;
 		{
 			$wpdb->show_errors();
 			echo '<div class="vw-bench-block-pl"><pre>';
-			print_r($wpdb->print_error());
+			$wpdb->print_error();
 			echo "</pre></div>";
 		}
 
