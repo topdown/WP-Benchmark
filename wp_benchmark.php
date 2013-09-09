@@ -437,6 +437,16 @@ class wp_benchmark
 			padding: 0;
 			overflow: auto;
 		}
+		
+		.vw-bench-single-error {
+			padding-left: 30px;
+			margin-bottom: 15px;
+			color: #ffff00;
+		}
+		
+		.vw-bench-error {
+			color: #ff6666;
+		}
 
 		.vw-bench-block-pl pre, .wp-queries p, .wp-queries div {
 			display: block;
@@ -580,10 +590,17 @@ CSS;
 
 		if (in_array('errors', $this->options))
 		{
-			$wpdb->show_errors();
-			echo '<div class="vw-bench-block-pl"><pre>';
-			$wpdb->print_error();
-			echo "</pre></div>";
+			global $EZSQL_ERROR;
+			if( ! empty( $EZSQL_ERROR ) ) {
+				echo '<div class="vw-bench-block-pl"><pre>';
+				echo '<h3>WordPress Database Errors: </h3>';
+				foreach( $EZSQL_ERROR as $error ) {
+					echo '<div class="vw-bench-single-error">';
+					printf( '<p>Query: %s</p><p class="vw-bench-error">Error: %s</p>', $error['query'], $error['error_str'] );
+					echo '</div>';
+				}				
+				echo "</pre></div>";
+			}
 		}
 
 		if (in_array('queries', $this->options))
