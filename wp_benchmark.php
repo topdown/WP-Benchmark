@@ -87,12 +87,12 @@ class wp_benchmark
 			// admin actions
 			add_action('admin_menu', array(
 				$this,
-				$this->plugin_slug . '_menu'
+				'wp_bench_menu'
 			));
 
 			add_filter('plugin_action_links', array(
 				$this,
-				$this->plugin_slug . '_plugin_action_links'
+				'wp_bench_plugin_action_links'
 			), 10, 2);
 
 			if (in_array('admin', $this->options))
@@ -104,7 +104,7 @@ class wp_benchmark
 
 				add_action('shutdown', array(
 					$this,
-					$this->plugin_slug . 'mark_init'
+					'wpbenchmark_init'
 				), 100);
 			}
 		}
@@ -117,7 +117,7 @@ class wp_benchmark
 
 			add_action('wp_footer', array(
 				$this,
-				$this->plugin_slug . 'mark_init'
+				'wp_benchmark_init'
 			), 100);
 
 		}
@@ -163,7 +163,7 @@ class wp_benchmark
 			$this->plugin_slug,
 			array(
 				$this,
-				$this->plugin_slug . '_settings'
+				'wp_bench_settings'
 			)
 		);
 	}
