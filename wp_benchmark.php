@@ -104,7 +104,7 @@ class wp_benchmark
 
 				add_action('shutdown', array(
 					$this,
-					'wpbenchmark_init'
+					'wp_benchmark_init'
 				), 100);
 			}
 		}
