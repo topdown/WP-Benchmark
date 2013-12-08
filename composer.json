@@ -2,6 +2,9 @@
     "name": "topdown/WP-Benchmark",
     "description": "A quick benchmark utility for WordPress It will currently output Run Time, Query Count, Memory Usage, Included File count. It can also output all queries being run, query errors, constants, and included files. <strong>You shouldn't leave this active, there is no reason to, its purpose is for debugging.</strong> But if you do at least shut off all of the settings in the settings page for the plugin. <strong>Only admins can see the data from this plugin unless checked for everyone (Don't leave it checked).",
     "type": "wordpress-plugin",
+    "require": {
+        "composer/installers": "~1.0"
+    },
     "license": "GPL MIT",
     "authors": [
         {
