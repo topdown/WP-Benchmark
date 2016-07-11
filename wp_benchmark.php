@@ -176,7 +176,7 @@ class wp_benchmark
 
 		global $current_user;
 
-		get_currentuserinfo();
+		wp_get_current_user();
 		if (!current_user_can('manage_options'))
 		{
 			die();
@@ -528,7 +528,7 @@ CSS;
 
 		global $current_user;
 
-		get_currentuserinfo();
+		wp_get_current_user();
 		if (!current_user_can('manage_options') && !in_array('logged_out', $this->options))
 		{
 			return;
